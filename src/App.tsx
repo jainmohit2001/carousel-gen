@@ -4,6 +4,7 @@ import logo from './logo.svg'
 import {
   Button,
   FormControl,
+  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
@@ -11,7 +12,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from '@mui/material'
-import { CancelOutlined, Clear, UploadFileOutlined } from '@mui/icons-material'
+import { Clear, UploadFileOutlined } from '@mui/icons-material'
 import { getFonts } from './utils/getFonts'
 
 function App() {
@@ -27,8 +28,7 @@ function App() {
   const [contentColorError, setContentColorError] = useState(false)
 
   const [profileImage, setProfileImage] = useState(null as File | null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const profileImageRef = useRef<any>()
+  const profileImageRef = useRef<HTMLInputElement>(null)
 
   const [name, setName] = useState('')
 
@@ -48,7 +48,11 @@ function App() {
     }
   }
 
-  const removeProfileImage = () => {
+  const removeProfileImage = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault()
+
     if (profileImageRef.current) {
       profileImageRef.current.value = ''
       setProfileImage(null)
@@ -71,8 +75,8 @@ function App() {
         <img src={logo} width={48} height={48} />
         <p className='text-2xl font-bold'>Carousel Gen</p>
       </div>
-      <div className='flex w-full flex-wrap gap-4 overflow-x-auto p-3'>
-        <div className='border-2 border-solid border-gray-100'>
+      <div className='flex w-full flex-wrap items-center justify-center overflow-x-auto p-3'>
+        <div className='flex flex-col border-2 border-solid border-gray-100'>
           <div
             className='flex flex-shrink-0 flex-grow-0 flex-col gap-4 p-4'
             id='carousel'
@@ -109,7 +113,7 @@ function App() {
             </p>
           </div>
         </div>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 p-3'>
           <TextField
             onChange={(e) => {
               const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
@@ -163,26 +167,30 @@ function App() {
             label='Content Color'
             placeholder='#000'
           />
-          <div className='flex flex-row items-center justify-center gap-4'>
-            <Button
-              variant='contained'
-              component='label'
-              className='gap-3'
-              endIcon={!profileImage && <UploadFileOutlined />}
-            >
-              Profile image {profileImage && '- ' + profileImage.name}
-              <input
-                type='file'
-                hidden
-                accept='image/*'
-                ref={profileImageRef}
-                onChange={handleProfileImageUpload}
-              />
-            </Button>
-            <Button variant='outlined' onClick={removeProfileImage}>
-              Remove
-            </Button>
-          </div>
+          <Button
+            variant='outlined'
+            component='label'
+            size='large'
+            className='gap-3'
+            endIcon={
+              profileImage ? (
+                <IconButton size='small' onClick={removeProfileImage}>
+                  <Clear fontSize='small' />
+                </IconButton>
+              ) : (
+                <UploadFileOutlined />
+              )
+            }
+          >
+            {profileImage ? profileImage.name : 'No image selected'}
+            <input
+              type='file'
+              hidden
+              accept='image/*'
+              ref={profileImageRef}
+              onChange={handleProfileImageUpload}
+            />
+          </Button>
           <TextField
             value={name}
             onChange={(e) => {
