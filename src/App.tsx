@@ -145,6 +145,7 @@ function App() {
                 >
                   {profileImage && (
                     <img
+                      id='id-profile-image'
                       src={URL.createObjectURL(profileImage)}
                       width={36}
                       height={36}
@@ -158,6 +159,7 @@ function App() {
                   )}
                   {name && (
                     <p
+                      id='id-name'
                       style={{
                         color: contentColor,
                         fontSize: 14,
@@ -169,6 +171,7 @@ function App() {
                 </div>
               )}
               <p
+                id='id-content'
                 style={{
                   color: contentColor,
                   fontSize: 16,
@@ -295,6 +298,7 @@ function App() {
             <FormControl fullWidth>
               <InputLabel id='font-family-select-label'>Font Family</InputLabel>
               <Select
+                labelId='font-family-select-label'
                 id='font-family-select'
                 value={fontFamily}
                 label='Font Family'
