@@ -170,10 +170,10 @@ function App() {
           <img src={logo} width={48} height={48} />
           <p className='text-2xl font-bold'>Carousel Gen</p>
         </div>
-        <p className='text-xs'>Generate simple PDF carousels for Linkedin.</p>
+        <p className='text-xs'>Generate simple PDF carousels posts.</p>
       </div>
-      <div className='flex w-full flex-wrap justify-center overflow-x-auto p-3'>
-        <div className='flex flex-col gap-3 p-2'>
+      <div className='flex w-full flex-wrap justify-center p-3'>
+        <div className='flex flex-col gap-3 overflow-x-hidden p-2'>
           {/* Add and delete button */}
           <div className='flex w-full flex-row justify-between'>
             <Button
@@ -202,72 +202,75 @@ function App() {
               </Button>
             )}
           </div>
-          <div className='border-2 border-solid border-gray-100'>
-            {/* Carousel Starts here */}
-            <div
-              id='carousel'
-              aria-label='carousel'
-              style={{
-                width: carouselSize.width,
-                flexBasis: carouselSize.width,
-                height: carouselSize.height,
-                backgroundColor: bgColor,
-                flexShrink: 0,
-                flexGrow: 0,
-                display: 'flex',
-                padding: 12,
-                flexDirection: 'column',
-                justifyContent: 'start',
-                alignItems: 'start',
-              }}
-            >
-              {(profileImage || name) && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: 16,
-                  }}
-                >
-                  {profileImage && (
-                    <img
-                      aria-label='carousel-profile-image'
-                      src={URL.createObjectURL(profileImage)}
-                      width={36}
-                      height={36}
-                      style={{
-                        height: 36,
-                        width: 36,
-                        borderRadius: 99999,
-                        marginRight: 12,
-                      }}
-                    />
-                  )}
-                  {name && (
-                    <p
-                      aria-label='carousel-name'
-                      style={{
-                        color: contentColor,
-                        fontSize: 14,
-                      }}
-                    >
-                      {name}
-                    </p>
-                  )}
-                </div>
-              )}
-              <p
-                aria-label='carousel-content'
+          <div className='flex overflow-auto'>
+            <div className='mx-auto flex overflow-x-auto border-2 border-solid border-gray-100'>
+              {/* Carousel Starts here */}
+              <div
+                id='carousel'
+                aria-label='carousel'
                 style={{
-                  color: contentColor,
-                  fontSize: contentFontSize,
+                  width: carouselSize.width,
+                  flexBasis: carouselSize.width,
+                  height: carouselSize.height,
+                  backgroundColor: bgColor,
+                  overflowX: 'auto',
+                  flexShrink: 0,
+                  flexGrow: 0,
+                  display: 'flex',
+                  padding: 12,
+                  flexDirection: 'column',
+                  justifyContent: 'start',
+                  alignItems: 'start',
                 }}
               >
-                {content[currentPageIndex]}
-              </p>
+                {(profileImage || name) && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 16,
+                    }}
+                  >
+                    {profileImage && (
+                      <img
+                        aria-label='carousel-profile-image'
+                        src={URL.createObjectURL(profileImage)}
+                        width={36}
+                        height={36}
+                        style={{
+                          height: 36,
+                          width: 36,
+                          borderRadius: 99999,
+                          marginRight: 12,
+                        }}
+                      />
+                    )}
+                    {name && (
+                      <p
+                        aria-label='carousel-name'
+                        style={{
+                          color: contentColor,
+                          fontSize: 14,
+                        }}
+                      >
+                        {name}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <p
+                  aria-label='carousel-content'
+                  style={{
+                    color: contentColor,
+                    fontSize: contentFontSize,
+                  }}
+                >
+                  {content[currentPageIndex]}
+                </p>
+              </div>
+              {/* Carousel Ends here */}
             </div>
-            {/* Carousel Ends here */}
           </div>
 
           {/* Navigation Starts here */}
@@ -300,8 +303,49 @@ function App() {
           </div>
           {/* Navigation ends here */}
         </div>
-        {/*  */}
         <div className='flex flex-col gap-4 px-4 py-3'>
+          <div className='flex w-full flex-row gap-3'>
+            {/* Carousel width and height using text field */}
+            <TextField
+              onChange={(e) => {
+                const regex = /^[0-9\b]+$/
+                if (regex.test(e.target.value)) {
+                  const newWidth = parseInt(e.target.value)
+                  if (newWidth > 0 && newWidth <= 4096) {
+                    setCarouselSize({
+                      ...carouselSize,
+                      width: newWidth,
+                    })
+                  }
+                }
+              }}
+              defaultValue={512}
+              label='Width'
+              type='number'
+              inputProps={{ max: 4096, min: 0 }}
+              fullWidth
+            />
+
+            <TextField
+              onChange={(e) => {
+                const regex = /^[0-9\b]+$/
+                if (regex.test(e.target.value)) {
+                  const newHeight = parseInt(e.target.value)
+                  if (newHeight > 0 && newHeight <= 4096) {
+                    setCarouselSize({
+                      ...carouselSize,
+                      height: newHeight,
+                    })
+                  }
+                }
+              }}
+              defaultValue={512}
+              label='Height'
+              type='number'
+              inputProps={{ max: 4096, min: 0 }}
+              fullWidth
+            />
+          </div>
           <TextField
             onChange={(e) => {
               const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/

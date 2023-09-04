@@ -16,6 +16,8 @@ describe('App', () => {
     expect(screen.getByLabelText('Content Color')).toBeInTheDocument()
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Font size')).toBeInTheDocument()
+    expect(screen.getByLabelText('Width')).toBeInTheDocument()
+    expect(screen.getByLabelText('Height')).toBeInTheDocument()
 
     // Check for Add page, Next page and Prev page button
     expect(screen.getByLabelText('Add page')).toBeInTheDocument()
@@ -24,6 +26,27 @@ describe('App', () => {
 
     // Wait for fonts to load and then check for font family input
     expect(await screen.findByLabelText('Font Family')).toBeInTheDocument()
+  })
+
+  it('Should update carousel size', async () => {
+    render(<App />)
+    const width = 1024,
+      height = 1024
+    // Update width and height
+    // Check if the carousel has the updated width and height
+    await act(async () => {
+      // We need to clear default values before typing in new values
+      userEvent.clear(screen.getByLabelText('Width'))
+      userEvent.clear(screen.getByLabelText('Height'))
+      userEvent.type(screen.getByLabelText('Width'), width.toString())
+      userEvent.type(screen.getByLabelText('Height'), height.toString())
+    })
+    expect(await screen.findByLabelText('Width')).toHaveValue(width)
+    expect(await screen.findByLabelText('Height')).toHaveValue(height)
+    expect(await screen.findByLabelText('carousel')).toHaveStyle({
+      width: `${width}px`,
+      height: `${height}px`,
+    })
   })
 
   it('should update background color', async () => {
