@@ -11,6 +11,7 @@ function PdfPage(
   profileImage: File | null,
   content: string,
   contentFontSize: number,
+  index: number,
 ) {
   return (
     <Page
@@ -18,6 +19,8 @@ function PdfPage(
       style={{ fontFamily: fontFamilyName }}
       orientation='portrait'
       wrap
+      id={index.toString()}
+      key={index.toString()}
     >
       <View
         style={{

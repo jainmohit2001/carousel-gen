@@ -12,7 +12,7 @@ describe('App', () => {
     // Check for inputs
     expect(screen.getByLabelText('Background Color')).toBeInTheDocument()
     expect(screen.getByLabelText('Content')).toBeInTheDocument()
-    expect(screen.getByText('No image selected')).toBeInTheDocument()
+    expect(screen.getByText('No profile image selected')).toBeInTheDocument()
     expect(screen.getByLabelText('Content Color')).toBeInTheDocument()
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Font size')).toBeInTheDocument()
@@ -155,7 +155,9 @@ describe('App', () => {
     await act(async () => {
       userEvent.click(screen.getByLabelText('Clear profile image'))
     })
-    expect(await screen.findByText('No image selected')).toBeInTheDocument()
+    expect(
+      await screen.findByText('No profile image selected'),
+    ).toBeInTheDocument()
     expect(
       screen.queryByLabelText('carousel-profile-image'),
     ).not.toBeInTheDocument()
@@ -222,7 +224,6 @@ describe('App', () => {
         target: { value: fontSize },
       })
     })
-    screen.debug(screen.getByLabelText('Font size'))
     expect(await screen.findByLabelText('Font size')).toHaveValue(fontSize)
     expect(await screen.findByLabelText('carousel-content')).toHaveStyle({
       fontSize: fontSize,

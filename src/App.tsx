@@ -13,7 +13,15 @@ import {
   Slider,
   TextField,
 } from '@mui/material'
-import { Clear, FileDownload, UploadFileOutlined } from '@mui/icons-material'
+import {
+  Add,
+  ArrowBack,
+  ArrowForward,
+  Clear,
+  Delete,
+  FileDownload,
+  UploadFileOutlined,
+} from '@mui/icons-material'
 import { getFonts } from './utils/getFonts'
 import { Document, Font, pdf } from '@react-pdf/renderer'
 import fetchFontFromGoogle from './utils/fetchFontFromGoogle'
@@ -24,7 +32,7 @@ function App() {
     width: 512,
     height: 512,
   })
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState([''])
 
   const [bgColor, setBgColor] = useState(black.toString())
   const [bgColorError, setBgColorError] = useState(false)
@@ -44,13 +52,15 @@ function App() {
 
   const [contentFontSize, setContentFontSize] = useState(16)
 
+  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+
   useEffect(() => {
     getFonts().then((value) => {
       setAvailableFontFamilies(value)
     })
   }, [])
 
-  function getPage(fontUrl: string | null) {
+  function getPage(index: number, fontUrl: string | null) {
     const fontFamilyName = fontUrl !== null ? fontFamily : undefined
 
     return PdfPage(
@@ -60,8 +70,9 @@ function App() {
       contentColor,
       name,
       profileImage,
-      content,
+      content[index],
       contentFontSize,
+      index,
     )
   }
 
@@ -79,7 +90,11 @@ function App() {
       })
     }
     if (source) {
-      const doc = <Document pageMode='useNone'>{getPage(fontUrl)}</Document>
+      const doc = (
+        <Document pageMode='useNone'>
+          {content.map((value, index) => getPage(index, fontUrl))}
+        </Document>
+      )
       const asPdf = pdf()
       asPdf.updateContainer(doc)
       const blob = await asPdf.toBlob()
@@ -112,15 +127,75 @@ function App() {
     }
   }
 
+  const handleAddContent = () => {
+    const newContent = [...content]
+    newContent.push('')
+    setContent(newContent)
+    setCurrentPageIndex(newContent.length - 1)
+  }
+
+  const handleNext = () => {
+    if (currentPageIndex < content.length - 1) {
+      setCurrentPageIndex(currentPageIndex + 1)
+    }
+  }
+
+  const handlePrev = () => {
+    if (currentPageIndex > 0) {
+      setCurrentPageIndex(currentPageIndex - 1)
+    }
+  }
+
+  const handleRemovePage = () => {
+    if (content.length > 1) {
+      const newContent = [...content]
+      newContent.splice(currentPageIndex, 1)
+      setContent(newContent)
+      setCurrentPageIndex(Math.max(0, currentPageIndex - 1))
+    }
+  }
+
   return (
     <div className='flex flex-1 flex-col gap-4 p-3'>
-      <div className='mx-auto flex items-center gap-3'>
-        <img src={logo} width={48} height={48} />
-        <p className='text-2xl font-bold'>Carousel Gen</p>
+      <div className='mx-auto mb-3 flex flex-col items-center gap-3'>
+        <div className='flex items-center gap-3'>
+          <img src={logo} width={48} height={48} />
+          <p className='text-2xl font-bold'>Carousel Gen</p>
+        </div>
+        <p className='text-xs'>Generate simple PDF carousels for Linkedin.</p>
       </div>
       <div className='flex w-full flex-wrap justify-center overflow-x-auto p-3'>
-        <div className='flex flex-col p-2'>
+        <div className='flex flex-col gap-3 p-2'>
+          {/* Add and delete button */}
+          <div className='flex w-full flex-row justify-between'>
+            <Button
+              variant='contained'
+              onClick={handleAddContent}
+              aria-label='Add page'
+              title='Add page'
+              endIcon={<Add fontSize='small' />}
+              disabled={content.length >= 15}
+            >
+              <p className='flex-nowrap whitespace-nowrap text-sm'>Add page</p>
+            </Button>
+
+            {content.length > 1 && (
+              <Button
+                variant='contained'
+                color='error'
+                aria-label={`Remove page ${currentPageIndex + 1}`}
+                title={`Remove page ${currentPageIndex + 1}`}
+                endIcon={<Delete fontSize='small' />}
+                onClick={handleRemovePage}
+              >
+                <p className='flex-nowrap whitespace-nowrap text-sm'>
+                  Remove page {currentPageIndex + 1}
+                </p>
+              </Button>
+            )}
+          </div>
           <div className='border-2 border-solid border-gray-100'>
+            {/* Carousel Starts here */}
             <div
               id='carousel'
               aria-label='carousel'
@@ -181,12 +256,44 @@ function App() {
                   fontSize: contentFontSize,
                 }}
               >
-                {content}
+                {content[currentPageIndex]}
               </p>
             </div>
+            {/* Carousel Ends here */}
           </div>
+
+          {/* Navigation Starts here */}
+          <div className='flex w-full flex-row items-center'>
+            <Button
+              size='small'
+              aria-label='Prev page'
+              title='Prev page'
+              variant='contained'
+              disabled={currentPageIndex === 0}
+              onClick={handlePrev}
+              startIcon={<ArrowBack fontSize='small' />}
+            >
+              <p className='text-sm'>Prev</p>
+            </Button>
+            <p className='mx-auto text-sm font-bold'>
+              Page {currentPageIndex + 1} / {content.length}
+            </p>
+            <Button
+              size='small'
+              aria-label='Next page'
+              title='Next page'
+              variant='contained'
+              disabled={currentPageIndex === content.length - 1}
+              onClick={handleNext}
+              endIcon={<ArrowForward fontSize='small' />}
+            >
+              <p className='text-sm'>Next</p>
+            </Button>
+          </div>
+          {/* Navigation ends here */}
         </div>
-        <div className='flex flex-col gap-4 p-3'>
+        {/*  */}
+        <div className='flex flex-col gap-4 px-4 py-3'>
           <TextField
             onChange={(e) => {
               const regex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
@@ -211,9 +318,11 @@ function App() {
           />
           <TextField
             onChange={(e) => {
-              setContent(e.target.value)
+              const newContent = [...content]
+              newContent[currentPageIndex] = e.target.value
+              setContent(newContent)
             }}
-            value={content}
+            value={content[currentPageIndex]}
             label='Content'
             InputProps={{
               endAdornment: (
@@ -223,7 +332,9 @@ function App() {
                     fontSize='small'
                     cursor='pointer'
                     onClick={() => {
-                      setContent('')
+                      const newContent = [...content]
+                      newContent[currentPageIndex] = ''
+                      setContent(newContent)
                     }}
                   />
                 </InputAdornment>
@@ -272,7 +383,7 @@ function App() {
               )
             }
           >
-            {profileImage ? profileImage.name : 'No image selected'}
+            {profileImage ? profileImage.name : 'No profile image selected'}
             <input
               type='file'
               aria-label='Profile Image'
