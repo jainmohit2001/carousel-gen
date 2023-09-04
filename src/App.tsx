@@ -45,6 +45,7 @@ function App() {
       setAvailableFontFamilies(value)
     })
   }, [])
+
   function getPage(fontUrl: string | null) {
     const fontFamilyName = fontUrl !== null ? fontFamily : undefined
 
@@ -110,7 +111,6 @@ function App() {
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-3'>
-      <div id='carousel-pdf'></div>
       <div className='mx-auto flex items-center gap-3'>
         <img src={logo} width={48} height={48} />
         <p className='text-2xl font-bold'>Carousel Gen</p>
@@ -120,6 +120,7 @@ function App() {
           <div className='border-2 border-solid border-gray-100'>
             <div
               id='carousel'
+              aria-label='carousel'
               style={{
                 width: carouselSize.width,
                 flexBasis: carouselSize.width,
