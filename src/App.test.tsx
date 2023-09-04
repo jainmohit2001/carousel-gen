@@ -24,32 +24,56 @@ describe('App', () => {
     render(<App />)
     const color = '#f2f'
 
-    // Type in color
+    // Type in color.
+    // Cross check if the color is updated.
     await act(async () => {
       userEvent.type(screen.getByLabelText('Background Color'), color)
-      expect(await screen.findByLabelText('Background Color')).toHaveValue(
-        color,
-      )
     })
-
-    // Cross check if the carousel has the same background color
+    expect(await screen.findByLabelText('Background Color')).toHaveValue(color)
     expect(await screen.findByLabelText('carousel')).toHaveStyle({
       backgroundColor: color,
     })
 
-    // Type in invalid color and check for invalid helper text
+    // Type in invalid color.
+    // Check for invalid helper text.
     await act(async () => {
       userEvent.type(screen.getByLabelText('Background Color'), 'invalid')
-      expect(await screen.findByText('Invalid color')).toBeInTheDocument()
     })
+    expect(await screen.findByText('Invalid color')).toBeInTheDocument()
 
-    // Clear the input and check if the carousel has the default background color
+    // Clear the input.
+    // Check if the carousel has the default background color
     await act(async () => {
       userEvent.clear(screen.getByLabelText('Background Color'))
-      expect(await screen.findByLabelText('Background Color')).toHaveValue('')
     })
+    expect(await screen.findByLabelText('Background Color')).toHaveValue('')
     expect(await screen.findByLabelText('carousel')).toHaveStyle({
       backgroundColor: '#000',
     })
+  })
+
+  it('should update and clear content', async () => {
+    render(<App />)
+    const content = 'Some content here'
+
+    // Type in content.
+    // Cross check if the content is updated.
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content'), content)
+    })
+    expect(await screen.findByLabelText('Content')).toHaveValue(content)
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content,
+    )
+
+    // Clear the content using the clear button.
+    // Check if the carousel-content is empty.
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Clear content'))
+    })
+    expect(await screen.findByLabelText('Content')).toHaveValue('')
+    expect(
+      await screen.findByLabelText('carousel-content'),
+    ).toBeEmptyDOMElement()
   })
 })

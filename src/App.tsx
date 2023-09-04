@@ -146,7 +146,7 @@ function App() {
                 >
                   {profileImage && (
                     <img
-                      id='id-profile-image'
+                      aria-label='carousel-profile-image'
                       src={URL.createObjectURL(profileImage)}
                       width={36}
                       height={36}
@@ -160,7 +160,7 @@ function App() {
                   )}
                   {name && (
                     <p
-                      id='id-name'
+                      aria-label='carousel-name'
                       style={{
                         color: contentColor,
                         fontSize: 14,
@@ -172,7 +172,7 @@ function App() {
                 </div>
               )}
               <p
-                id='id-content'
+                aria-label='carousel-content'
                 style={{
                   color: contentColor,
                   fontSize: 16,
@@ -216,6 +216,7 @@ function App() {
               endAdornment: (
                 <InputAdornment position='end'>
                   <Clear
+                    aria-label='Clear content'
                     fontSize='small'
                     cursor='pointer'
                     onClick={() => {
@@ -284,6 +285,7 @@ function App() {
               endAdornment: (
                 <InputAdornment position='end'>
                   <Clear
+                    aria-label='Clear name'
                     fontSize='small'
                     cursor='pointer'
                     onClick={() => {
