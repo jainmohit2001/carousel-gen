@@ -108,4 +108,27 @@ describe('App', () => {
       color: '#fff',
     })
   })
+
+  it('should update and clear name', async () => {
+    render(<App />)
+    const name = 'John Doe'
+
+    // Type in name.
+    // Cross check if the name is updated.
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Name'), name)
+    })
+    expect(await screen.findByLabelText('Name')).toHaveValue(name)
+    expect(await screen.findByLabelText('carousel-name')).toHaveTextContent(
+      name,
+    )
+
+    // Clear the name using the clear button.
+    // Check if the carousel-name element is removed.
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Clear name'))
+    })
+    expect(await screen.findByLabelText('Name')).toHaveValue('')
+    expect(screen.queryByLabelText('carousel-name')).not.toBeInTheDocument()
+  })
 })
