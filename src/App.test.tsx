@@ -1,7 +1,7 @@
 import React from 'react'
 
 import App from './App'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 describe('App', () => {
@@ -187,5 +187,26 @@ describe('App', () => {
         fontFamily: fontFamily,
       })
     }
+  })
+
+  it('should open new window with pdf', async () => {
+    render(<App />)
+
+    // Mock window.open
+    const windowOpenMock = jest.fn()
+    Object.defineProperty(window, 'open', {
+      writable: true,
+      value: windowOpenMock,
+    })
+
+    // Click on download button.
+    await act(async () => {
+      userEvent.click(screen.getByText('Download PDF'))
+    })
+
+    // Check if window.open is called once.
+    await waitFor(async () => {
+      expect(windowOpenMock).toHaveBeenCalledTimes(1)
+    })
   })
 })
