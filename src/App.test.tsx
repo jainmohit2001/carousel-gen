@@ -76,4 +76,36 @@ describe('App', () => {
       await screen.findByLabelText('carousel-content'),
     ).toBeEmptyDOMElement()
   })
+
+  it('should update content color', async () => {
+    render(<App />)
+    const color = '#f2f'
+
+    // Type in color.
+    // Cross check if the color is updated.
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content Color'), color)
+    })
+    expect(await screen.findByLabelText('Content Color')).toHaveValue(color)
+    expect(await screen.findByLabelText('carousel-content')).toHaveStyle({
+      color: color,
+    })
+
+    // Type in invalid color.
+    // Check for invalid helper text.
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content Color'), 'invalid')
+    })
+    expect(await screen.findByText('Invalid color')).toBeInTheDocument()
+
+    // Clear the input.
+    // Check if the carousel has the default content color
+    await act(async () => {
+      userEvent.clear(screen.getByLabelText('Content Color'))
+    })
+    expect(await screen.findByLabelText('Content Color')).toHaveValue('')
+    expect(await screen.findByLabelText('carousel-content')).toHaveStyle({
+      color: '#fff',
+    })
+  })
 })
