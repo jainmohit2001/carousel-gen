@@ -10,6 +10,7 @@ function PdfPage(
   name: string,
   profileImage: File | null,
   content: string,
+  contentFontSize: number,
 ) {
   return (
     <Page
@@ -72,7 +73,7 @@ function PdfPage(
           <Text
             style={{
               color: contentColor,
-              fontSize: 16,
+              fontSize: contentFontSize,
               flexShrink: 1,
               flexGrow: 0,
             }}

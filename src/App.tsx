@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Slider,
   TextField,
 } from '@mui/material'
 import { Clear, FileDownload, UploadFileOutlined } from '@mui/icons-material'
@@ -23,6 +24,7 @@ function App() {
     width: 512,
     height: 512,
   })
+  const [content, setContent] = useState('')
 
   const [bgColor, setBgColor] = useState(black.toString())
   const [bgColorError, setBgColorError] = useState(false)
@@ -39,6 +41,8 @@ function App() {
   const [availableFontFamilies, setAvailableFontFamilies] = useState(
     [] as string[],
   )
+
+  const [contentFontSize, setContentFontSize] = useState(16)
 
   useEffect(() => {
     getFonts().then((value) => {
@@ -57,6 +61,7 @@ function App() {
       name,
       profileImage,
       content,
+      contentFontSize,
     )
   }
 
@@ -106,8 +111,6 @@ function App() {
       carousel.style.fontFamily = e.target.value
     }
   }
-
-  const [content, setContent] = useState('')
 
   return (
     <div className='flex flex-1 flex-col gap-4 p-3'>
@@ -175,7 +178,7 @@ function App() {
                 aria-label='carousel-content'
                 style={{
                   color: contentColor,
-                  fontSize: 16,
+                  fontSize: contentFontSize,
                 }}
               >
                 {content}
@@ -320,6 +323,21 @@ function App() {
               </Select>
             </FormControl>
           )}
+          <div className='flex flex-col gap-1'>
+            <InputLabel id='font-size'>Font size</InputLabel>
+            <Slider
+              aria-labelledby='font-size'
+              valueLabelDisplay='on'
+              size='small'
+              max={32}
+              min={7}
+              step={1}
+              value={contentFontSize}
+              onChange={(e, value) => {
+                setContentFontSize(value as number)
+              }}
+            />
+          </div>
           <Button
             size='medium'
             onClick={() => downloadPdf()}

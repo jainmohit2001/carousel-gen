@@ -1,7 +1,7 @@
 import React from 'react'
 
 import App from './App'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 describe('App', () => {
@@ -15,6 +15,7 @@ describe('App', () => {
     expect(screen.getByText('No image selected')).toBeInTheDocument()
     expect(screen.getByLabelText('Content Color')).toBeInTheDocument()
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
+    expect(screen.getByLabelText('Font size')).toBeInTheDocument()
 
     // Wait for fonts to load and then check for font family input
     expect(await screen.findByLabelText('Font Family')).toBeInTheDocument()
@@ -207,6 +208,24 @@ describe('App', () => {
     // Check if window.open is called once.
     await waitFor(async () => {
       expect(windowOpenMock).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('should update content font size', async () => {
+    render(<App />)
+    const fontSize = '20'
+
+    // Update slider value.
+    // Check if the carousel-content has the updated font size.
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Font size'), {
+        target: { value: fontSize },
+      })
+    })
+    screen.debug(screen.getByLabelText('Font size'))
+    expect(await screen.findByLabelText('Font size')).toHaveValue(fontSize)
+    expect(await screen.findByLabelText('carousel-content')).toHaveStyle({
+      fontSize: fontSize,
     })
   })
 })
