@@ -34,3 +34,5 @@ npm test
 - Font family
   - **Note**: The Font family functionality only works on the devices that produce a .ttf file when calling the Google fonts API.
     Check out this stackoverflow discussion for more information: https://stackoverflow.com/a/27308229/21899409
+
+<img src='./carousel-gen-index.jpeg'>
