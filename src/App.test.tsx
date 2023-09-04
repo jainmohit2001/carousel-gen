@@ -159,4 +159,33 @@ describe('App', () => {
       screen.queryByLabelText('carousel-profile-image'),
     ).not.toBeInTheDocument()
   })
+
+  it('should update font family', async () => {
+    render(<App />)
+
+    // Wait for fonts to load.
+    expect(await screen.findByLabelText('Font Family')).toBeInTheDocument()
+
+    // Click on Font family input
+    let fontFamily: string | null = null
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Font Family'))
+    })
+
+    // Get the first option with role='option' and click on it.
+    await act(async () => {
+      const firstOption = (await screen.findAllByRole('option'))[0]
+      fontFamily = firstOption.textContent
+      userEvent.click(firstOption)
+    })
+
+    // Check if the font family is updated in the input and carousel
+    expect(fontFamily).not.toBeNull()
+    if (fontFamily) {
+      expect(await screen.findByText(fontFamily)).toBeInTheDocument()
+      expect(await screen.findByLabelText('carousel')).toHaveStyle({
+        fontFamily: fontFamily,
+      })
+    }
+  })
 })
