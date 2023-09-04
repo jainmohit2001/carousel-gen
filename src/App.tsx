@@ -257,7 +257,11 @@ function App() {
             className='gap-3'
             endIcon={
               profileImage ? (
-                <IconButton size='small' onClick={removeProfileImage}>
+                <IconButton
+                  size='small'
+                  aria-label='Clear profile image'
+                  onClick={removeProfileImage}
+                >
                   <Clear fontSize='small' />
                 </IconButton>
               ) : (
@@ -268,6 +272,7 @@ function App() {
             {profileImage ? profileImage.name : 'No image selected'}
             <input
               type='file'
+              aria-label='Profile Image'
               hidden
               accept='image/*'
               ref={profileImageRef}

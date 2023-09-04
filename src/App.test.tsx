@@ -131,4 +131,32 @@ describe('App', () => {
     expect(await screen.findByLabelText('Name')).toHaveValue('')
     expect(screen.queryByLabelText('carousel-name')).not.toBeInTheDocument()
   })
+
+  it('should upload and remove profile image', async () => {
+    render(<App />)
+
+    // Upload image.
+    // Check if the image is uploaded and the name is displayed.
+    // Check if the image is visible in the carousel.
+    const file = new File(['Profile image'], 'profile.png', {
+      type: 'image/png',
+    })
+    await act(async () => {
+      userEvent.upload(screen.getByLabelText('Profile Image'), file)
+    })
+    expect(await screen.findByText('profile.png')).toBeInTheDocument()
+    expect(
+      await screen.findByLabelText('carousel-profile-image'),
+    ).toBeInTheDocument()
+
+    // Remove image by clicking on the remove button.
+    // Check if the image is removed.
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Clear profile image'))
+    })
+    expect(await screen.findByText('No image selected')).toBeInTheDocument()
+    expect(
+      screen.queryByLabelText('carousel-profile-image'),
+    ).not.toBeInTheDocument()
+  })
 })

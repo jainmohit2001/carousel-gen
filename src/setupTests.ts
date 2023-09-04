@@ -17,3 +17,6 @@ Object.defineProperty(document, 'fonts', {
     },
   } as FontFaceSet,
 })
+
+// Mocking URL.createObjectURL
+Object.defineProperty(URL, 'createObjectURL', { value: jest.fn() })
