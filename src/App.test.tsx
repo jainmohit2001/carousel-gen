@@ -17,6 +17,11 @@ describe('App', () => {
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
     expect(screen.getByLabelText('Font size')).toBeInTheDocument()
 
+    // Check for Add page, Next page and Prev page button
+    expect(screen.getByLabelText('Add page')).toBeInTheDocument()
+    expect(screen.getByLabelText('Next page')).toBeInTheDocument()
+    expect(screen.getByLabelText('Prev page')).toBeInTheDocument()
+
     // Wait for fonts to load and then check for font family input
     expect(await screen.findByLabelText('Font Family')).toBeInTheDocument()
   })
@@ -228,5 +233,106 @@ describe('App', () => {
     expect(await screen.findByLabelText('carousel-content')).toHaveStyle({
       fontSize: fontSize,
     })
+  })
+
+  it('should add and remove page successfully with content', async () => {
+    render(<App />)
+    const content = ['Content 1', 'Content 2', 'Content 3']
+
+    // Set content for Page 1
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content'), content[0])
+    })
+
+    // Number of pages should be 1
+    expect(screen.getByText('Page 1 / 1')).toBeInTheDocument()
+
+    // Both prev and next button should be disabled
+    expect(screen.getByLabelText('Prev page')).toBeDisabled()
+    expect(screen.getByLabelText('Next page')).toBeDisabled()
+
+    // Add page
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Add page'))
+    })
+
+    // Set content for Page 2
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content'), content[1])
+    })
+
+    // The carousel-content should have content of Page 2
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content[1],
+    )
+
+    // Number of pages should increase
+    expect(screen.getByText('Page 2 / 2')).toBeInTheDocument()
+
+    // Prev button should be enabled, next button should be disabled
+    expect(screen.getByLabelText('Prev page')).toBeEnabled()
+    expect(screen.getByLabelText('Next page')).toBeDisabled()
+
+    // Add page
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Add page'))
+    })
+
+    // Set content for Page 3
+    await act(async () => {
+      userEvent.type(screen.getByLabelText('Content'), content[2])
+    })
+
+    // The carousel-content should have content of Page 3
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content[2],
+    )
+
+    // Number of pages should increase
+    expect(screen.getByText('Page 3 / 3')).toBeInTheDocument()
+
+    // Prev button should be enabled, next button should be disabled
+    expect(screen.getByLabelText('Prev page')).toBeEnabled()
+    expect(screen.getByLabelText('Next page')).toBeDisabled()
+
+    // Go back to Page 2
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Prev page'))
+    })
+
+    // The carousel-content should have content of Page 2
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content[1],
+    )
+
+    // Both prev and next button should be enabled
+    expect(screen.getByLabelText('Prev page')).toBeEnabled()
+    expect(screen.getByLabelText('Next page')).toBeEnabled()
+
+    // Content text field should have content of Page 2
+    expect(await screen.findByLabelText('Content')).toHaveValue(content[1])
+
+    // Remove page 2
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Remove page'))
+    })
+
+    // The carousel-content should have content of Page 1
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content[0],
+    )
+
+    // Number of pages should decrease
+    expect(screen.getByText('Page 1 / 2')).toBeInTheDocument()
+
+    // Go to next page
+    await act(async () => {
+      userEvent.click(screen.getByLabelText('Next page'))
+    })
+
+    // The carousel-content should have content of Page 3
+    expect(await screen.findByLabelText('carousel-content')).toHaveTextContent(
+      content[2],
+    )
   })
 })

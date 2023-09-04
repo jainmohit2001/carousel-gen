@@ -183,8 +183,8 @@ function App() {
               <Button
                 variant='contained'
                 color='error'
-                aria-label={`Remove page ${currentPageIndex + 1}`}
-                title={`Remove page ${currentPageIndex + 1}`}
+                aria-label='Remove page'
+                title='Remove page'
                 endIcon={<Delete fontSize='small' />}
                 onClick={handleRemovePage}
               >
