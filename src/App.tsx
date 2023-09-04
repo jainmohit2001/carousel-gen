@@ -3,6 +3,7 @@ import { black, white } from 'tailwindcss/colors'
 import logo from './logo.svg'
 import {
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   InputAdornment,
@@ -54,6 +55,8 @@ function App() {
 
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
 
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+
   useEffect(() => {
     getFonts().then((value) => {
       setAvailableFontFamilies(value)
@@ -77,6 +80,10 @@ function App() {
   }
 
   async function downloadPdf() {
+    if (downloadingPdf) {
+      return
+    }
+    setDownloadingPdf(true)
     const source = window.document.getElementById('carousel')
     let fontUrl: string | null = null
     if (fontFamily) {
@@ -99,6 +106,7 @@ function App() {
       asPdf.updateContainer(doc)
       const blob = await asPdf.toBlob()
       window.open(URL.createObjectURL(blob), '_blank')
+      setDownloadingPdf(false)
     }
   }
 
@@ -453,9 +461,13 @@ function App() {
             size='medium'
             onClick={() => downloadPdf()}
             variant='contained'
-            endIcon={<FileDownload />}
+            endIcon={!downloadingPdf && <FileDownload fontSize='small' />}
           >
-            Download PDF
+            {!downloadingPdf ? (
+              <p className='text-sm'>Download PDF</p>
+            ) : (
+              <CircularProgress color='inherit' size={28} thickness={4.5} />
+            )}
           </Button>
         </div>
       </div>
